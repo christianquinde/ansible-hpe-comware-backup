@@ -1,0 +1,25 @@
+# Backups
+backups/
+
+# Inventory with credentials
+inventory.ini
+
+# Vault / secrets
+*.vault
+vault.yml
+.vault_pass
+
+# SSH config (weak ciphers)
+ssh_config
+
+# Ansible cache
+*.retry
+.ansible/
+
+# Containers / images
+*.tar
+*.img
+
+# OS
+.DS_Store
+Thumbs.db

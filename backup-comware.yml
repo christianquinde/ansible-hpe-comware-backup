@@ -1,0 +1,37 @@
+---
+- name: Backup HPE Comware configuration
+  hosts: hpe_comware
+  gather_facts: no
+  connection: local
+
+  vars:
+    ssh_config: /ansible/ssh_config
+    backup_dir: /ansible/backups
+
+  tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Backup running configuration via SSH
+      shell: |
+        sshpass -p '{{ ansible_password }}' \
+        ssh -tt -F {{ ssh_config }} {{ ansible_user }}@{{ ansible_host }} << 'EOF'
+        screen-length disable
+        display current-configuration
+        quit
+        EOF
+      args:
+        executable: /bin/bash
+      register: config_output
+      changed_when: false
+
+    - name: Save configuration to file
+      copy:
+        content: "{{ config_output.stdout }}"
+        dest: "{{ backup_dir }}/{{ inventory_hostname }}-{{ lookup('pipe', 'date +%F_%H-%M-%S') }}.cfg"
+      delegate_to: localhost
