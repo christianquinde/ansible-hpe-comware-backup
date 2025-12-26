@@ -3,6 +3,8 @@
   hosts: hpe_comware
   gather_facts: no
   connection: local
+  vars_files:
+    - group_vars/hpe_comware/vault.yml
 
   vars:
     ssh_config: /ansible/ssh_config
